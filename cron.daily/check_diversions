@@ -2,11 +2,11 @@
 save_file=/etc/site/local_dpkg_diversions.txt
 
 set -e
-if test "$*" = --daemon
+if test $# != 0 || test -t 0
 then
-	daemon=true; shift
-else
 	daemon=false
+else
+	daemon=true
 fi
 
 log() {
@@ -31,13 +31,14 @@ trap cleanup 0
 trap 'exit $?' HUP INT TERM QUIT
 
 mode=check
-while getopts udls opt
+while getopts Dudls opt
 do
 	case $opt in
 		u) mode=update;;
 		d) mode=diff;;
 		l) mode=list;;
 		s) mode=saved;;
+		D) daemon=true;;
 		*) false || exit
 	esac
 done
